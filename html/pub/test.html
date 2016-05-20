@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>docker in production</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=800" />
+    <link href="slide/lib/bootstrap.css" rel="stylesheet" />
+    <script src="slide/lib/jquery.min.js"></script>
+    <script src="slide/lib/markdown.min.js"></script>
+    <script src="slide/tarent-slide.js"></script>
+    <link rel="stylesheet" href="slide/tarent-slide.css">
+    <style>
+    </style>
+    <script>
+     function updateMarkdown(etag) {
+       $.get("README.md", function( data, textStatus, jqXHR ) {
+         var etagNew = jqXHR.getResponseHeader("ETag");
+         if (etagNew != etag) {
+           $('#content').html( markdown.toHTML(data) );
+           var lastHeader = undefined;
+           $('#content').find('h1').each(function(index, header) {
+             if (lastHeader) {
+               var newSlide = $('<slide>').appendTo($('#content'));
+               $(lastHeader).nextUntil(header).andSelf().detach().appendTo(newSlide);
+             }
+             lastHeader = header;
+           });
+           var newSlide = $('<slide>').appendTo($('#content'));
+           var firstSlide = $('#content').find('slide').first();
+           $(lastHeader).nextUntil(firstSlide).andSelf().detach().appendTo(newSlide);
+
+           newSlideDeck().addAllSlides();
+         }
+         if (location.hostname == '127.0.0.1' || location.hostname == 'localhost') {
+           window.setTimeout(function() {
+             updateMarkdown(etagNew);
+           }, 100);
+         }
+       })
+     }
+     
+     $(function() {
+       updateMarkdown("none");
+     });
+    </script>
+  </head>
+  <body>
+    <div class="slides">
+      <slide>
+        <img style="float: right; margin-top: 400px; width: 700px;" src="images/docker.png">
+        <div style="clear: both; margin-right: 20px;">
+          <p>
+            <h2 style="text-align: right">Sebastian Mancke</h2>
+            <h6 style="text-align: right">Creative Commons BY-SA 3.0</h6>
+          </p>
+        </div>
+      </slide>
+      <div id="content"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+
+.image-list img {
+    width: 100%;
+    border: 8px solid rgba(0, 0, 0, 0);
+}
+
+.image-list {
+    display: inline-block;
+    vertical-align:top;
+}
+
+
+.gallery-thumbnail {
+    position: relative;
+}
+
+.gallery-thumbnail-description {
+    position: absolute;
+    z-index: 10;
+    bottom: 0px;
+    height: 40px;
+    width: 100%;
+    display: none;
+    background: rgba(239, 253, 255, 0.8);
+    padding: 5px;
+    padding-left: 15px;
+}
+
+
+.gallery-thumbnail:hover .gallery-thumbnail-description {
+    display: block;
+}
+
+.share {
+    display: none;
+}
+
+.gallery-thumbnail:hover .share {
+    display: block;
+}

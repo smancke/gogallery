@@ -1,0 +1,24 @@
+<!--# include virtual="/_header?title=Meine+Bilder&page=gallery-user" -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.min.js"></script>
+<script src="lib/ng-flow-standalone.min.js"></script>
+<script src="gallery-user.js"></script>
+<script>
+ function loadCss(url) {
+   var head  = document.getElementsByTagName('head')[0];
+   var link  = document.createElement('link');
+   link.rel  = 'stylesheet';
+   link.type = 'text/css';
+   link.href = url;
+   link.media = 'all';
+   head.appendChild(link);
+ }
+ loadCss('gallery-user.css');
+</script>
+
+<div ng-app="gogallery">
+  <ng-view></ng-view>
+</div>
+
+<!--# include virtual="/_footer" -->

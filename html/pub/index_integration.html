@@ -1,0 +1,26 @@
+<!--# include virtual="/_header?title=Bildergalerie&page=gallery" -->
+
+<script src="ps/photoswipe.js"></script>
+<script src="ps/photoswipe-ui-default.min.js"></script> 
+<script src="gallery.js"></script>
+<script>
+ function loadCss(url) {
+   var head  = document.getElementsByTagName('head')[0];
+   var link  = document.createElement('link');
+   link.rel  = 'stylesheet';
+   link.type = 'text/css';
+   link.href = url;
+   link.media = 'all';
+   head.appendChild(link);
+ }
+ loadCss('ps/photoswipe.css');
+ loadCss('ps/default-skin/default-skin.css');
+ loadCss('gallery.css');
+</script>
+
+<div class="container container-width">
+  <div id="gallery" style="width: 100%"></div>
+</div>  
+<script>$(function() {gallery("#gallery", "/gallery", 180, 5, "")})</script>
+
+<!--# include virtual="/_footer" -->
