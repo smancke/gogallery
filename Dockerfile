@@ -1,20 +1,26 @@
 
-FROM ubuntu:16.4
+FROM ubuntu:16.04
 
-ENV galleryDir=/var/lib/gallery \
-    htmlDir=/html \
-    goversion=go1.6.2.linux-amd64
+ENV goversion=go1.6.2.linux-amd64 \
     GOPATH=/go
-
-ADD * /go/src/github.com/smancke/gogallery
+ 
+COPY main.go /go/src/github.com/smancke/gogallery/
+COPY service /go/src/github.com/smancke/gogallery/service
+COPY imglib /go/src/github.com/smancke/gogallery/imglib
+COPY html /html
 
 RUN apt-get update && \
-    apt-get install -y git libvips-tools wget && \
+    apt-get install -y git wget && \
+    apt-get install -y libvips-tools build-essential --no-install-recommends && \
     wget https://storage.googleapis.com/golang/${goversion}.tar.gz  && \
-    tar -C /usr/local -xzf ${goversion}.tar.gz  && \
+    tar -C /usr/local -xzf ${goversion}.tar.gz && \
+    ln -s /usr/local/go/bin/go /usr/bin/go && \
     cd /go/src/github.com/smancke/gogallery && \
-    go get -vt ./... &&  go test -v ./... && go install .  && \
-    rm -rf /go/pkg && rm -rf /go/src
+    go get -v -t ./... && go install .  && \
+    rm -rf /go/pkg /go/src /usr/local/go /${goversion}.tar.gz /var/lib/apt/lists/*
+
+ENV galleryDir=/var/lib/gallery \
+    htmlDir=/html
 
 VOLUME /var/lib/gallery
 VOLUME /tmp
