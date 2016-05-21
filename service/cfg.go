@@ -11,8 +11,9 @@ var defaults = map[string]string{
 	"galleryDir":             "/tmp/gallery",
 	"htmlDir":                "./html",
 	"cookieName":             "okmsdc",
-	"session_secret":         "secretsecretsecretsecretsecretse",
+	"session_secret":         "XYcretsecretsecretsecretsecretse",
 	"sessionLifetimeMinutes": "180",
+	"testOverwriteUsername":  "",
 }
 
 func Cfg(key string) string {

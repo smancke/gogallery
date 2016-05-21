@@ -23,11 +23,23 @@ func Handler(lib *imglib.ImageLibrary) http.Handler {
 func createRouter() *web.Router {
 	router := web.New(Context{})
 
+	if Cfg("testOverwriteUsername") != "" {
+		testOverwriteUsername = Cfg("testOverwriteUsername")
+	}
+
 	router.
 		Middleware(web.LoggerMiddleware).
 		//Middleware(web.ShowErrorsMiddleware).
 		Middleware(web.StaticMiddleware(Cfg("galleryDir"), web.StaticOption{Prefix: "/gallery/image"})).
-		Middleware(web.StaticMiddleware(Cfg("htmlDir"), web.StaticOption{Prefix: "/gallery/ui"}))
+		Middleware(web.StaticMiddleware(Cfg("htmlDir"), web.StaticOption{Prefix: "/gallery/ui"})).
+		Get("/", func(w web.ResponseWriter, r *web.Request) {
+			w.Write([]byte(`<html>
+  <body>
+    <a href="/gallery/ui/pub/index.html">View gallery</a>
+    <br><a href="/gallery/ui/user/index.html">Add images</a>
+  </body>
+</html>`))
+		})
 
 	router.Subrouter(Api{}, "/gallery/api").
 		Get("/images", (*Api).GetImages)
