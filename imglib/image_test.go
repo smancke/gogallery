@@ -2,6 +2,7 @@ package imglib
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"image"
 	"image/color"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"path"
 	"testing"
-	"fmt"
 )
 
 func TestImageScalingAndSaving(t *testing.T) {
@@ -19,14 +19,14 @@ func TestImageScalingAndSaving(t *testing.T) {
 	}
 	tmp := tmpDir()
 
-	err := image.SaveToDirectory(tmp, bytes.NewBuffer(createDummyImage()), ImageConfiguration{200,1200, 95})
+	err := image.SaveToDirectory(tmp, bytes.NewBuffer(createDummyImage()), ImageConfiguration{200, 1200, 95})
 
 	assert.NoError(t, err)
 
 	fmt.Printf("image: %v", image)
 
-	assert.Equal(t, "42.jpg", image.LargeFilename)
-	assert.Equal(t, "42tn.jpg", image.ThumbFilename)
+	assert.Equal(t, "42.jpeg", image.LargeFilename)
+	assert.Equal(t, "42tn.jpeg", image.ThumbFilename)
 
 	assert.Equal(t, 200, image.ThumbW)
 	assert.Equal(t, 150, image.ThumbH)

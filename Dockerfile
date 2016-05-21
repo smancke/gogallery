@@ -16,7 +16,7 @@ RUN apt-get update && \
     tar -C /usr/local -xzf ${goversion}.tar.gz && \
     ln -s /usr/local/go/bin/go /usr/bin/go && \
     cd /go/src/github.com/smancke/gogallery && \
-    go get -v -t ./... && go install .  && \
+    go get -v -t ./... && go test ./... && go vet ./... && go install . && \
     rm -rf /go/pkg /go/src /usr/local/go /${goversion}.tar.gz /var/lib/apt/lists/*
 
 ENV galleryDir=/var/lib/gallery \

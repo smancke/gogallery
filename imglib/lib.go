@@ -66,7 +66,7 @@ func (lib *ImageLibrary) openDB(filename string) error {
 	gormdb, err := gorm.Open("sqlite3", filename)
 	if err == nil {
 		if err := gormdb.DB().Ping(); err != nil {
-			log.Println("error pinging database: %v", err)
+			log.Printf("error pinging database: %v\n", err)
 		} else {
 			log.Println("can ping database")
 		}
@@ -83,7 +83,7 @@ func (lib *ImageLibrary) openDB(filename string) error {
 			log.Println("ensured db schema")
 		}
 	} else {
-		log.Println("error opening sqlite3 db %v: %v", filename, err)
+		log.Printf("error opening sqlite3 db %v: %v\n", filename, err)
 	}
 	lib.db = gormdb
 	return err
