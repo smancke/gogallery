@@ -11,7 +11,7 @@ var defaults = map[string]string{
 	"galleryDir":             "/tmp/gallery",
 	"htmlDir":                "./html",
 	"cookieName":             "okmsdc",
-	"session_secret":         "XYcretsecretsecretsecretsecretse",
+	"session_secret":         "secretsecretsecretsecretsecretse",
 	"sessionLifetimeMinutes": "180",
 	"testOverwriteUsername":  "",
 }
