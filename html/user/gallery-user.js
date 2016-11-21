@@ -2,13 +2,6 @@
 var app = angular.module('gogallery', ['ngRoute', 'flow']);
 
 app.config(function($routeProvider, flowFactoryProvider) {    
-    $routeProvider
-        .when('/gogallery', {
-            templateUrl: '/blaa.html',
-        }).otherwise({
-            templateUrl: 'mainTemplate.html',
-        });
-
     flowFactoryProvider.defaults = {
         target: '/gallery/api/upload',
         withCredentials: true,

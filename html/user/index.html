@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
     <link uic-remove rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link uic-remove rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
@@ -7,14 +9,94 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-route.min.js"></script>
     <script src="lib/ng-flow-standalone.min.js"></script>
     <link rel="stylesheet" href="gallery-user.css"></link>
-    <script src="gallery-user.js"></script>
+    <script src="gallery-user.js"></script>    
   </head>
   <body ng-app="gogallery">
     <uic-fragment name="content">
 
       <br>
-      <ng-view></ng-view>
+      <div ng-controller="GalleryCtrl">
+        <div flow-prevent-drop flow-drag-enter="dropClass='drag-over'" flow-drag-leave="dropClass=''"
+             flow-init=""
+             flow-files-submitted="$flow.upload()"
+             flow-file-success="success($file, $message)"
+             flow-file-error="$file.msg = $message"
+             flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]">
 
+          <div class="container">
+            <h3>Angezeigte Daten:
+              <span>
+                <a target="_blank" href="{{myData.link}}">{{myData.nickName}}</a>
+                <button ng-show="! editMyData" class="btn btn-xs btn-default" ng-click="startEditMyData()">Ändern</button>
+              </span>
+            </h3>
+            <form ng-show="editMyData" class="gallery-form">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Anzeigename</label>
+                <input type="text" class="form-control" placeholder="Nickname" ng-model="myData.nickName">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Link</label>
+                <input type="text" class="form-control" placeholder="http://www.example.de/" ng-model="myData.link">
+              </div>
+              <button class="btn btn-md btn-default" ng-click="saveMyData()">Speichern</button>
+            </form>
+          </div>
+
+          <div class="container">
+            <h3>Bilder Hochladen</h3>
+            <div flow-drop="" class="drop" ng-class="dropClass">
+              <div>
+                <span class="btn btn-lg btn-default" flow-btn="">Bilder auswählen<input multiple="multiple" style="visibility: hidden; position: absolute;" type="file"></span>    
+                <b>&nbsp;ODER:&nbsp;</b>
+                Per Drag &amp; Drop auf diese Fläche ziehen
+              </div>
+              <br>
+              <div class="row">
+                <div ng-repeat="file in $flow.files track by $index | orderBy:'-1*$index':true" class="col-xs-4 col-sm-3 col-md-2 clearfix">
+                  <div class="thumbnail">
+                    <img flow-img="file" class="gallery-thumbnail-img"/>
+                    <div class="caption">
+                      <div class="progress progress-striped" ng-class="{active: file.isUploading()}">
+                        <div class="progress-bar" role="progressbar"
+                             aria-valuenow="{{percentDone(file)}}"
+                             aria-valuemin="0"
+                             aria-valuemax="100"
+                             ng-style="progress(file)">
+                          <span>{{percentDone(file)}} Fertig</span>
+                        </div>
+                      </div>
+                      <span ng-show="file.msg">Fehler: {{file.msg}}</span>
+
+                      <div class="btn-group">
+                        <a class="btn btn-xs btn-danger" ng-click="file.cancel()">Abbrechen</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span>Mit dem Hochladen der Bilder sicherst Du zu, dass die Bilder auf dieser Web-Seite genutzt werden dürfen und frei von Rechten dritter sind.</span>
+          </div>
+        </div>
+
+        <div class="container">
+          <h3>Deine Bilder</h3>
+          <div class="row">
+            <div ng-repeat="image in myImages track by $index" class="col-xs-6 col-sm-4 col-md-3 clearfix">
+              <div class="thumbnail" >
+                <img ng-src="/gallery/image/{{image.msrc}}" class="gallery-thumbnail-img"/>
+                <div class="caption">
+                  <div class="btn-group">
+                    <a class="btn btn-xs btn-danger" ng-click="deleteImage(image)">Löschen</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+      
     </uic-fragment>
   </body>
 </html>
