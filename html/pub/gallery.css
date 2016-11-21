@@ -1,7 +1,9 @@
 
 .image-list img {
     width: 100%;
+    background: rgba(0,0,0,0.2);.; 
     border: 8px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box; 
 }
 
 .image-list {

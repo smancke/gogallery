@@ -136,12 +136,14 @@ func (lib *ImageLibrary) CreateImage(user User, imageStream io.Reader) (*Image, 
 	return image, nil
 }
 
-func (lib *ImageLibrary) GetImages() ([]*Image, error) {
+func (lib *ImageLibrary) GetImages(offset, limit int) ([]*Image, error) {
 	images := make([]*Image, 0, 50)
 	q := lib.db.
 		Model(&images).
 		Preload("User").
-		Order("image.created_at desc")
+		Order("image.created_at desc").
+		Offset(offset).
+		Limit(limit)
 	if err := q.Find(&images).Error; err != nil {
 		return nil, err
 	}

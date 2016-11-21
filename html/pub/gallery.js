@@ -1,11 +1,11 @@
 
 function gallery(elementSelector, pathPrefix, minContainerWidth, maxContainerCount, getOptions) {
-
-    var imagePath = pathPrefix + '/image/';
-    var images = [];
-    if ('ontouchstart' in window || 'onmsgesturechange' in window) {
-
-    }
+    var fetchSize = 20
+    var fetchedOffsets = {}
+    var imagePath = pathPrefix + '/image/'
+    var images = []
+    var contentsChangedSinceLayout = false
+    var moreImagesAvailable = true
     
     $(elementSelector).after(
         '<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">'
@@ -72,14 +72,17 @@ function gallery(elementSelector, pathPrefix, minContainerWidth, maxContainerCou
     var containerCount;
     
     var layout = function() {
+        var scrollPosition = $(window).scrollTop();
         var element = $(elementSelector);
         var width = element.width();
         var newContainerCount = Math.min(Math.max(1, Math.floor(width/minContainerWidth)), maxContainerCount);
-        if (newContainerCount == containerCount) {
+        if (newContainerCount == containerCount && !contentsChangedSinceLayout) {
             return;
         }
+        contentsChangedSinceLayout = false
         containerCount = newContainerCount        
         var containerWidthPercent = 100*(width/containerCount)/width;
+        var containerWidth = width/containerCount;
 
         element.empty();
         
@@ -103,7 +106,7 @@ function gallery(elementSelector, pathPrefix, minContainerWidth, maxContainerCou
                 .click(createFacebookClickHandler(images[i]))
                 .appendTo(div);
             
-            $('<a href="#" class="gallery-thumbnail-link" data-gindex="'+i+'"><img src="' + images[i].msrc + '"></a>')
+            $('<a href="#" class="gallery-thumbnail-link" data-gindex="'+i+'"><img style="width:'+containerWidth+'px; height:' + ((images[i].h/images[i].w) * containerWidth)+'px" src="' + images[i].msrc + '"></a>')
                 .click(clickHandler)
                 .appendTo(div);
 
@@ -118,21 +121,61 @@ function gallery(elementSelector, pathPrefix, minContainerWidth, maxContainerCou
             }
             $('<div class="gallery-thumbnail-description"><a target="_blank"'+href+'>by '+images[i].user.nickName+'</a></div>')
                 .appendTo(div);
+
+            if (images.length - i == (fetchSize)) {
+                var more = $('<div id="more-button"></div>').on('click', fetchNextPage);
+                more.appendTo(div);
+            }
         }
+        $(window).scrollTop(scrollPosition);
     };
 
-    var fetch = function() {
-        $.getJSON(pathPrefix + "/api/images?"+ getOptions, function( data ) {
-            images = data;
-            $.each( images, function( key, image ) {
-                image.src = imagePath + image.src
-                image.msrc = imagePath + image.msrc
-            });
+    var fetchIfNeeded = function() {
+        if (isScrolledIntoView($("#more-button"))) {
+            fetchNextPage()
+        }
+    }
 
-            layout();
+    var fetchNextPage = function() {
+        fetch(images.length + 1,fetchSize)
+    }
+
+    var fetch = function(offset, limit) {
+        if (fetchedOffsets[offset]) {
+            return
+        }
+        fetchedOffsets[offset] = 'started'
+        var url = pathPrefix + "/api/images?offset="+offset + "&limit="+limit;
+        if (getOptions) {
+            url += "&"+getOptions;
+        }
+        
+        $.getJSON(url, function( data ) {             
+            $.each(data, function( key, image ) {
+                image.src = imagePath + image.src;
+                image.msrc = imagePath + image.msrc;
+                images.push(image);
+            });
+            moreImagesAvailable = data.length == limit
+
+            contentsChangedSinceLayout = true
+            fetchedOffsets[offset] = 'done'
+            layout()
+            //fetchIfNeeded()
         });
     }
 
+    var isScrolledIntoView = function(elem) {
+        var docViewTop = $(window).scrollTop();
+        var docViewBottom = docViewTop + $(window).height();
+        
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop + $(elem).height();
+        
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
+    $( window ).on("scroll", fetchIfNeeded);
     $( window ).resize(layout);
-    fetch();
+    fetch(0,fetchSize);
 }
